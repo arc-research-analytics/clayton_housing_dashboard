@@ -6,13 +6,13 @@ import plotly.express as px
 import pydeck as pdk
 
 # global variable for county name
-county_var = 'DeKalb'
+county_var = 'Clayton'
 
 # global variables for the pydeck chropleth map
-latitude_2D = 33.80
-latitude_3D = 33.79
-longitude_2D = -84.18
-longitude_3D = -84.20
+latitude_2D = 33.53
+latitude_3D = 33.53
+longitude_2D = -84.35
+longitude_3D = -84.35
 min_zoom = 8
 max_zoom = 15
 zoom_2D = 9.2  # lower values zoom out, higher values zoom in
@@ -153,15 +153,10 @@ geography_included = st.sidebar.radio(
 
 # sub-geography options
 sub_geos_list = [
-    'Brookhaven/Doraville',
-    'Central DeKalb',
-    'Clarkston/Scottdale',
-    'Decatur/Druid Hills',
-    'Dunwoody',
-    'Embry Hills/Tucker',
-    'Lithonia/E. DeKalb',
-    'SW DeKalb',
-    'Stone Mountain'
+    'NW Clayton', 
+    'NE Clayton', 
+    'Central Clayton', 
+    'South Clayton'
 ]
 
 # Logic & select box for the sub-geographies
@@ -170,7 +165,7 @@ if geography_included == 'City/Region':
     sub_geo = st.sidebar.multiselect(
         'Select one or more cities/regions:',
         sub_geos_list,
-        ['Decatur/Druid Hills'],
+        ['Central Clayton'],
     )
 
 # Sidebar divider #2
@@ -215,13 +210,15 @@ base_map_dict = {
 def load_tab_data():
     # load the data
     df = pd.read_csv(
-        'Data/DeKalb_20-24.csv',
+        f'Data/{county_var}_20-24.csv',
         thousands=',',
         keep_default_na=False,
+        dtype={
+            'GEOID': 'str',
+            'yr_blt': 'float',
+            'home_size': 'float'
+        }
     )
-
-    # cast price / SF as float
-    df['price_sf'] = df['price_sf'].astype(float)
 
     # return this item
     return df
@@ -281,7 +278,7 @@ def mapper_2D():
     df['GEOID'] = df['GEOID'].astype(str)
 
     # read in geospatial
-    gdf = gpd.read_file('Data/dekalb_CTs_simp.geojson')
+    gdf = gpd.read_file('Data/clayton_CTs_simp.geojson')
 
     # join together the 2, and let not man put asunder
     joined_df = gdf.merge(df, left_on='GEOID', right_on='GEOID')
@@ -376,7 +373,7 @@ def mapper_3D():
     df['GEOID'] = df['GEOID'].astype(str)
 
     # read in geospatial
-    gdf = gpd.read_file('Data/dekalb_CTs_simp.geojson')
+    gdf = gpd.read_file('Data/clayton_CTs_simp.geojson')
 
     # join together the 2, and let not man put asunder
     joined_df = gdf.merge(df, left_on='GEOID', right_on='GEOID')
